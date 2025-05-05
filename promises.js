@@ -23,8 +23,35 @@ try {
 }
 conexionBBExternaMySQL()
 const productos = fetch('https://fakestoreapi.com/products')
-    .then(r=>r.json)
+    .then(r=>r.json())
+    //.then(p=>console.log(p))
     .catch(e=>console.log(e))
 
-     git config --global user.email "josealejandro_pilavizuete@hotmail.com"
-  git config --global user.name "JoseP"
+ const obtenerProductos= async()=>{
+    try {
+        const r = await fetch('https://fakestoreapi.com/products')
+        const p = await r.json()
+        console.log(p)
+    } catch (e) {
+        console.log(e)
+        
+    }    
+}
+//obtenerProductos()
+//LOCAL STORAGE -> Lo implementa el frontend porque debe guardar la informacion que proviene del usuario
+fetch("https://jsonplaceholder.typicode.com/users/1")
+    .then((r)=>r.json())
+    .then(data=>{
+        let user = {
+            name: data.name,
+            email: data.email
+        }
+        localStorage(user)
+    })
+    .catch((e) => console.log(e))
+
+    const localStorage = (data)=>{
+    localStorage.setItem('user',JSON.stringify(data))
+}
+//MANEJO DE MODULOS
+//comando npm init -y
