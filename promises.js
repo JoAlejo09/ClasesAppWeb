@@ -39,7 +39,7 @@ const productos = fetch('https://fakestoreapi.com/products')
 }
 //obtenerProductos()
 //LOCAL STORAGE -> Lo implementa el frontend porque debe guardar la informacion que proviene del usuario
-fetch("https://jsonplaceholder.typicode.com/users/1")
+/*fetch("https://jsonplaceholder.typicode.com/users/1")
     .then((r)=>r.json())
     .then(data=>{
         let user = {
@@ -52,6 +52,14 @@ fetch("https://jsonplaceholder.typicode.com/users/1")
 
     const localStorage = (data)=>{
     localStorage.setItem('user',JSON.stringify(data))
-}
+}*/
 //MANEJO DE MODULOS
 //comando npm init -y
+
+import LOGIN from './autenticar.js'
+LOGIN(123)
+
+//PARA EXPORTAR E IMPORTAR VARIABLES
+import {login,likes} from './autenticar.js'
+login(123)
+console.log(likes)
