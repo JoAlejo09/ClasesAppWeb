@@ -1,0 +1,9 @@
+//NOS PERMITE GENERAR UNA SIMPLIFICACION DE COMANDOS MEDIANTE CODIGOS
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  SI SE EJECUTA nmp start - se ejecuta lo que esta en el comando
+  
