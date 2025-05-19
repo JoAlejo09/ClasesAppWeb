@@ -7,3 +7,8 @@
 
   SI SE EJECUTA nmp start - se ejecuta lo que esta en el comando
   
+  /*DIRECTORIOS EXPRESOS*/
+  .env --> Variables de entorno ocultas que no se muestran ni se implementan
+  .env.example --> Variables publicas accesibles por el usuario.
+
+  
