@@ -20,8 +20,9 @@ const registro = async (req,res)=>{
     const token = nuevoAdministrador.crearToken()
     await sendMailToRegister(correo,token)
     await nuevoAdministrador.save()
-    res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
-
+    res.status(200).json({
+        msg:"Revisa tu correo electrónico para confirmar tu cuenta"
+    })
     }
 }
 export {
