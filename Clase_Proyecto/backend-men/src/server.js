@@ -17,4 +17,7 @@ app.use(express.json())
 app.get('/',(req,res)=>{
     res.send("Server on")
 })
+
+app.use('/api',routerAdministrador)
+app.use((req,res)=> res.status(400).send("Endpoint no encontrado"))
 export default app
