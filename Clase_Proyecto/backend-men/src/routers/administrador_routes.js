@@ -10,4 +10,6 @@ router.post('/recuperarpassword',recuperarPassword)
 router.get('/recuperarpassword/:token',comprobarTokenPasword)
 router.post('/nuevopassword/:token',crearNuevoPassword)
 
+router.post('/login',login)
+
 export default router

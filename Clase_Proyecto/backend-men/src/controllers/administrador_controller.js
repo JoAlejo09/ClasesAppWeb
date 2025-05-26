@@ -86,10 +86,46 @@ const crearNuevoPassword = async (req, res)=>{
     await administradorBDD.save()
     res.status(200).json({msg:"Felicitaciones, ya puedes iniciar sesión con tu nuevo password"}) 
 }
+const login = async(req, res)=>{
+    const(correo,contrasena) = req.body
+    if (Object.values(req.body).includes("")) 
+        return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
+
+    const administradorBDD = await Administrador.findOne({correo}).select("-status -__v -token -updatedAt -createdAt")
+    if(administradorBDD?.confirmEmail===false) 
+        return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
+
+    if(!veterinarioBDD) 
+        return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
+
+    const verificarPassword = await administradorBDD.matchPassword(contrasena)
+    if(!verificarPassword)
+        return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
+    
+    
+    const adminInfo = await Administrador.findOne({ usuario: usuarioBDD._id });
+
+        // Preparar respuesta
+    return res.status(200).json({
+        msg: "Inicio de sesión exitoso",
+        usuario: {
+            _id: usuarioBDD._id,
+            correo: usuarioBDD.correo,
+            rol: usuarioBDD.rol?.nombre || "Sin rol",
+            ...(adminInfo && {
+                nombre_completo: adminInfo.nombre_completo,
+                telefono: adminInfo.telefono,
+                area_responsable: adminInfo.area_responsable,
+                codigo_admin: adminInfo.codigo_admin
+            })
+        }
+    });
+}
 export {
     registro,
     confirmarMail,
     recuperarPassword,
     comprobarTokenPassword,
-    crearNuevoPassword
+    crearNuevoPassword,
+    login
 }
