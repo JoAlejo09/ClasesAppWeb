@@ -6,6 +6,21 @@ const pacienteSchema = new Schema({
         type:String,
         required:true,
         trim
-    }
-})
+    },
+    apellido:{
+        type: String,
+        required: true,
+        trim
+    },
+    cedula:{
+        type:String,
+        required: true,
+        trim
+    },
+    correo:{
+        type:String,
+        required:true
+    }},{
+  timestamps: true   
+});
 export default model('Paciente', pacienteSchema)
