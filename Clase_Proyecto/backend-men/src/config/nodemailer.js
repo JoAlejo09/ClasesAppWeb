@@ -8,7 +8,7 @@ let transporter = nodemailer.createTransport({
     port: process.env.PORT_MAILTRAP,
     auth:{
         user:process.env.USER_MAILTRAP ,
-        password:process.env.PASS_MAILTRAP
+        pass:process.env.PASS_MAILTRAP
     }
 });
 const sendMailToRegister = (userMail,token)=>{
@@ -29,9 +29,7 @@ const sendMailToRegister = (userMail,token)=>{
         }
     })
 }
-
-...........................................
-
+/*
 const sendMailToRecoveryPassword = async(userMail,token)=>{
     let info = await transporter.sendMail({
     from: 'admin@mental_app.com',
@@ -46,8 +44,9 @@ const sendMailToRecoveryPassword = async(userMail,token)=>{
     `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
-}
+}*/
 export {
-    sendMailToRegister,
-    sendMailToRecoveryPassword
+     sendMailToRegister
+     //,
+    //sendMailToRecoveryPassword
 }

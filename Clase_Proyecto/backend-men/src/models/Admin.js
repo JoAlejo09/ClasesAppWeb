@@ -43,17 +43,17 @@ const administradorSchema = new Schema({
 }, {
   timestamps: true
 });
+//Metodos por defecto y personalizados
 
 // Hash de contraseña antes de guardar
-administradorSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.contrasena = await bcrypt.hash(this.password, 10);
-  next();
-});
 
-// Método para comparar contraseñas
-administradorSchema.methods.compararContrasena = async function (contrasenaIngresada) {
-  return await bcrypt.compare(contrasenaIngresada, this.password);
-};
-
+administradorSchema.methods.encryptPassword = async function name(password) {
+    const salt = await bcrypt.genSalt(10)
+    const passwordEncryp = await bcrypt.hash(password,salt)
+    return passwordEncryp
+}
+administradorSchema.methods.createToken = function(){
+    const tokenGenerado = this.token = Math.random().toString(36).slice(2)
+    return tokenGenerado
+}
 export default model('Administrador', administradorSchema);

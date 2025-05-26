@@ -1,37 +1,36 @@
 
 import Administrador from "../models/Admin.js"
-import {sendMailToRegister, sendMailToRecoveryPassword} from "../config/nodemailer.js"
-import {crearTokenJWT} from "../middleware/JWT.js"
+import {sendMailToRegister/*, sendMailToRecoveryPassword*/} from "../config/nodemailer.js"
+//import {crearTokenJWT} from "../middleware/JWT.js"
 
-const registro = async (req,res)=>{
-    try{
-        const {correo, contrasena} = req.body;
+//Metodo para crear
+const registro = async (req, res)=>{
+    const {correo, password} = req.body
 
-        if(Object.values(req.body).includes("")){
-            return res.status(400).json({msg: "Lo sentimos debe llenar todo el formulario"})
-        }
-        const verificarEmailBDD = await Administrador.findOne({correo});
-        if(verificarEmailBDD){
-            return res.status(400).json(msg:"Lo sentimos el email ya se encuentra ocupado")
-        }
-
-        const nuevoAdministrador = new Administrador(req.body);
-        nuevoAdministrador.password = await nuevoAdministrador.encryptPassword(contrasena)
-
-        const token = nuevoAdministrador.crearToken();
-        await sendMailToRegister(correo, token);
-
-        await nuevoAdministrador.save();
-        res.status(200).json({
-            msg: "Revisa tu correo electronico para confirmar tu cuenta"
-        });
-    }catch(error){
-        console.error(error);
-        res.status(500).json({
-            msg:"Hubo error en el servidor"
-        });
+    //Validacion que los campos esten llenos que ninguno tenga un espacio
+    if(Object.values(req.body).includes("")){
+        return res.status(400).json({msg: "Lo sentimos debe llenar todo el formulario"})
     }
+    //Busca si existe un correo en el modelo Administrador
+    const verificarEmailBDD = await Administrador.findOne({correo});
+
+    if(verificarEmailBDD){
+        return res.status(400).json({msg:"El e-mail ya se encuentra registrado"})
+    }
+    //Instancia para almacenar en la base de datos
+    const nuevoAdministrador = new Administrador (req.body)
+    nuevoAdministrador.password = await nuevoAdministrador.encryptPassword(password)
+    const token = nuevoAdministrador.createToken()
+    await sendMailToRegister(correo,token)
+    await nuevoAdministrador.save()
+    res.status(200).json({
+            msg: "Revisa tu correo electronico para confirmar tu cuenta"
+    });
+    
 }
+
+// Metodo para crear
+/*
 const confirmarMail = async (req,res)=>{
     if(!(req.params.token)) return res.status(400).json({msg:"Lo sentimos, no se puede validar la cuenta"})
     const administradorBDD = await Administrador.findOne({token:req.params.token})
@@ -127,13 +126,14 @@ const perfil = (req, res)=>{
     delete req.adminInfo.updatedAt
     delete req.adminInfo.__v
     res.status(200).json(req.adminInfo)
-}
+}*/
 export {
-    registro,
-    confirmarMail,
-    recuperarPassword,
-    comprobarTokenPassword,
-    crearNuevoPassword,
-    login,
-    perfil
+    registro
+    //, 
+    // confirmarMail, 
+    // recuperarPassword, 
+    // comprobarTokenPassword, 
+    // crearNuevoPassword,
+    // login,
+    // perfil
 }

@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken"
+/*import jwt from "jsonwebtoken"
 import Administrador from "../models/Admin.js"
 import Usuario from "../models/Usuario.js"
 
@@ -52,3 +52,4 @@ export {
     crearTokenJWT,
     verificarTokenJWT 
 }
+*/
