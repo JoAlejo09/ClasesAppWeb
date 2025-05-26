@@ -13,7 +13,7 @@ let transporter = nodemailer.createTransport({
 });
 const sendMailToRegister = (userMail,token)=>{
     let mailOptions = {
-        from:'admin@wet.com',
+        from:'admin@mental_app.com',
         to:userMail,
         subject:"Proyecto - Desarrollo de App Web de evaluacion mental",
         html:  `<p>Hola, haz clic <a href="${process.env.URL_BACKEND}confirmar/${token}">aquí</a> para confirmar tu cuenta.</p>
@@ -30,4 +30,24 @@ const sendMailToRegister = (userMail,token)=>{
     })
 }
 
-export default sendMailToRegister
+...........................................
+
+const sendMailToRecoveryPassword = async(userMail,token)=>{
+    let info = await transporter.sendMail({
+    from: 'admin@mental_app.com',
+    to: userMail,
+    subject: "Correo para reestablecer tu contraseña",
+    html: `
+    <h1>MentalS - 🐶 😺</h1>
+    <hr>
+    <a href=${process.env.URL_BACKEND}recuperarpassword/${token}>Clic para reestablecer tu contraseña</a>
+    <hr>
+    <footer>El equipo de SmartVET te da la más cordial bienvenida.</footer>
+    `
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
+export {
+    sendMailToRegister,
+    sendMailToRecoveryPassword
+}
