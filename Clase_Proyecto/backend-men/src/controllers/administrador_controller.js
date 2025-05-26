@@ -21,6 +21,7 @@ const registro = async (req,res)=>{
     await sendMailToRegister(correo,token)
     await nuevoAdministrador.save()
     res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
+
     }
 }
 export {
