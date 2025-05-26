@@ -2,12 +2,25 @@
 import { Schema, model } from 'mongoose';
 
 const reporteSchema = new Schema({
-  usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' },
-  fecha: { type: Date, default: Date.now },
-  titulo: String,
-  descripcion: String,
-  tipo: { type: String, enum: ['evaluacion', 'seguimiento', 'cuestionario', 'otro'], default: 'otro' },
-  datos_adicionales: Schema.Types.Mixed
+  paciente: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'Paciente' 
+  },
+  generadoPor: {
+    type: Schema.Types.ObjectId, 
+    ref: 'Administrador' 
+  },
+  resumen: {
+    type: String,
+    required: false
+  },
+  fecha: { 
+    type: Date, 
+    default: Date.now 
+  },
+  archivo:{
+    type: String // url o path del PDF
+  }
 });
 
 export default model('Reporte', reporteSchema);
