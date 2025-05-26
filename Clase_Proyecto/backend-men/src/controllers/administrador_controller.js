@@ -1,7 +1,7 @@
 
 import Administrador from "../models/Admin.js"
 import {sendMailToRegister, sendMailToRecoveryPassword} from "../config/nodemailer.js"
-
+import {crearTokenJWT} from "../middleware/JWT.js"
 
 const registro = async (req,res)=>{
     try{
@@ -102,11 +102,11 @@ const login = async(req, res)=>{
     if(!verificarPassword)
         return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
     
-    
     const adminInfo = await Administrador.findOne({ usuario: usuarioBDD._id });
-
+    const token = crearTokenJWT(adminInfo._id, adminInfo.rol)
         // Preparar respuesta
     return res.status(200).json({
+        token,
         msg: "Inicio de sesión exitoso",
         usuario: {
             _id: usuarioBDD._id,
@@ -121,6 +121,7 @@ const login = async(req, res)=>{
         }
     });
 }
+
 export {
     registro,
     confirmarMail,
