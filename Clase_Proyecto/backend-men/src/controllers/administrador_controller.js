@@ -5,7 +5,7 @@ import {crearTokenJWT} from "../middleware/JWT.js"
 
 const registro = async (req,res)=>{
     try{
-        const {correo, password} = req.body;
+        const {correo, contrasena} = req.body;
 
         if(Object.values(req.body).includes("")){
             return res.status(400).json({msg: "Lo sentimos debe llenar todo el formulario"})
@@ -16,7 +16,7 @@ const registro = async (req,res)=>{
         }
 
         const nuevoAdministrador = new Administrador(req.body);
-        nuevoAdministrador.password = await nuevoAdministrador.encryptPassword(password)
+        nuevoAdministrador.password = await nuevoAdministrador.encryptPassword(contrasena)
 
         const token = nuevoAdministrador.crearToken();
         await sendMailToRegister(correo, token);
@@ -105,9 +105,8 @@ const login = async(req, res)=>{
     const adminInfo = await Administrador.findOne({ usuario: usuarioBDD._id });
     const token = crearTokenJWT(adminInfo._id, adminInfo.rol)
         // Preparar respuesta
-    return res.status(200).json({
+    res.status(200).json({
         token,
-        msg: "Inicio de sesión exitoso",
         usuario: {
             _id: usuarioBDD._id,
             correo: usuarioBDD.correo,
@@ -121,12 +120,20 @@ const login = async(req, res)=>{
         }
     });
 }
-
+const perfil = (req, res)=>{
+    delete req.adminInfo.token
+    delete req.adminInfo.confirmEmail
+    delete req.adminInfo.createdAt
+    delete req.adminInfo.updatedAt
+    delete req.adminInfo.__v
+    res.status(200).json(req.adminInfo)
+}
 export {
     registro,
     confirmarMail,
     recuperarPassword,
     comprobarTokenPassword,
     crearNuevoPassword,
-    login
+    login,
+    perfil
 }
