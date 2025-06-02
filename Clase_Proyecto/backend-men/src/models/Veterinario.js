@@ -1,31 +1,37 @@
-import {Schema,model} from 'mongoose'
-import bcrypt from 'bcryptjs'
+import {Schema, model} from 'mongoose'
+import bcrypt from "bcryptjs"
+
 
 const veterinarioSchema = new Schema({
     nombre:{
-        type:String,//Tipo de dato
-        required:true, //Valor requerido
-        trim:true /*Quita espacios adelante y atras */
+        type:String,
+        require:true,
+        trim:true
     },
     apellido:{
         type:String,
-        required:true,
+        require:true,
         trim:true
     },
     direccion:{
         type:String,
-        default:null,
-        trim:true
+        trim:true,
+        default:null
     },
     celular:{
         type:String,
-        required:true,
         trim:true,
-        unique:true
+        default:null
+    },
+    email:{
+        type:String,
+        require:true,
+        trim:true,
+				unique:true
     },
     password:{
         type:String,
-        required:true
+        require:true
     },
     status:{
         type:Boolean,
@@ -45,7 +51,30 @@ const veterinarioSchema = new Schema({
     }
 
 },{
-    //CUANDO SE CREE UN REGISTRO TAMBIEN SE CREE LOS 
-    //CAMPOS CUANDO SE A CREADO Y CUANDO SE HAN ACTUALIZADO
-    timestamp:true
+    timestamps:true
 })
+
+
+// Método para cifrar el password del veterinario
+veterinarioSchema.methods.encrypPassword = async function(password){
+    const salt = await bcrypt.genSalt(10)
+    const passwordEncryp = await bcrypt.hash(password,salt)
+    return passwordEncryp
+}
+
+
+// Método para verificar si el password ingresado es el mismo de la BDD
+veterinarioSchema.methods.matchPassword = async function(password){
+    const response = await bcrypt.compare(password,this.password)
+    return response
+}
+
+
+// Método para crear un token 
+veterinarioSchema.methods.crearToken = function(){
+    const tokenGenerado = this.token = Math.random().toString(36).slice(2)
+    return tokenGenerado
+}
+
+
+export default model('Veterinario',veterinarioSchema)

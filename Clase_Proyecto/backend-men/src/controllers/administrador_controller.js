@@ -1,9 +1,10 @@
-
+/*
 import Administrador from "../models/Admin.js"
-import {sendMailToRegister/*, sendMailToRecoveryPassword*/} from "../config/nodemailer.js"
+import {sendMailToRegister/*, sendMailToRecoveryPassword} from "../config/nodemailer.js"
 //import {crearTokenJWT} from "../middleware/JWT.js"
 
-//Metodo para crear
+Metodo para crear
+
 const registro = async (req, res)=>{
     const {correo, password} = req.body
 
@@ -126,7 +127,7 @@ const perfil = (req, res)=>{
     delete req.adminInfo.updatedAt
     delete req.adminInfo.__v
     res.status(200).json(req.adminInfo)
-}*/
+}
 export {
     registro
     //, 
@@ -136,4 +137,25 @@ export {
     // crearNuevoPassword,
     // login,
     // perfil
+}*/
+
+import Veterinario from "../models/Veterinario.js"
+
+const registro = async (req,res)=>{
+    const {email,password} = req.body
+    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
+    const verificarEmailBDD = await Veterinario.findOne({email})
+    if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
+    const nuevoVeterinario = new Veterinario(req.body)
+    nuevoVeterinario.password = await nuevoVeterinario.encrypPassword(password)
+    nuevoVeterinario.crearToken()
+    await nuevoVeterinario.save()
+    res.status(200).json({nuevoVeterinario})
 }
+
+
+
+export {
+    registro
+}
+
