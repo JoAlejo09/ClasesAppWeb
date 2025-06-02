@@ -11,12 +11,13 @@ let transporter = nodemailer.createTransport({
         pass:process.env.PASS_MAILTRAP
     }
 });
+
 const sendMailToRegister = (userMail,token)=>{
     let mailOptions = {
         from:'admin@mental_app.com',
         to:userMail,
         subject:"Proyecto - Desarrollo de App Web de evaluacion mental",
-        html:  `<p>Hola, haz clic <a href="${process.env.URL_BACKEND}confirmar/${token}">aquí</a> para confirmar tu cuenta.</p>
+        html:  `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND}confirmar/${token}">aquí</a> para confirmar tu cuenta.</p>
         <hr>
         <footer>El equipo de SmartVET te da la más cordial bienvenida.</footer>
         `
@@ -29,6 +30,7 @@ const sendMailToRegister = (userMail,token)=>{
         }
     })
 }
+/*
 const sendMailToUser = (userMail, token) => {
     let mailOptions = {
         from: process.env.USER_MAILTRAP,
@@ -39,7 +41,7 @@ const sendMailToUser = (userMail, token) => {
         `
     }
 }
-/*
+*/
 const sendMailToRecoveryPassword = async(userMail,token)=>{
     let info = await transporter.sendMail({
     from: 'admin@mental_app.com',
@@ -54,9 +56,8 @@ const sendMailToRecoveryPassword = async(userMail,token)=>{
     `
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
-}*/
+}
 export {
-     sendMailToRegister
-     //,
-    //sendMailToRecoveryPassword
+    sendMailToRegister,
+    sendMailToRecoveryPassword
 }

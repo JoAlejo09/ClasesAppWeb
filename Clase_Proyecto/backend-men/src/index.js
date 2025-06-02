@@ -5,5 +5,7 @@ app.listen(app.get('port'),()=>{
     console.log(`Server ok on http://localhost:${app.get('port')}`)
 })
 connection()
+
+
 /* sIEMPRE EL PRIMER ARCHIVO QUE SE EJECUTA ES 
   "main": "index.js", */
