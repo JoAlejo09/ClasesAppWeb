@@ -17,7 +17,7 @@ const sendMailToRegister = (userMail,token)=>{
         from:'admin@mental_app.com',
         to:userMail,
         subject:"Proyecto - Desarrollo de App Web de evaluacion mental",
-        html:  `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND}confirmar/${token}">aquí</a> para confirmar tu cuenta.</p>
+        html:  `<p>Hola, haz clic <a href="${process.env.URL_FRONTEND}confirm/${token}">aquí</a> para confirmar tu cuenta.</p>
         <hr>
         <footer>El equipo de SmartVET te da la más cordial bienvenida.</footer>
         `
@@ -30,8 +30,9 @@ const sendMailToRegister = (userMail,token)=>{
         }
     })
 }
-/*
-const sendMailToUser = (userMail, token) => {
+
+/*const sendMailToUser = (userMail, token) => {
+
     let mailOptions = {
         from: process.env.USER_MAILTRAP,
         to: userMail,
@@ -50,7 +51,7 @@ const sendMailToRecoveryPassword = async(userMail,token)=>{
     html: `
     <h1>MentalS - 🐶 😺</h1>
     <hr>
-    <a href=${process.env.URL_BACKEND}recuperarpassword/${token}>Clic para reestablecer tu contraseña</a>
+    <a href=${process.env.URL_FRONTEND}reset/${token}>Clic para reestablecer tu contraseña</a>
     <hr>
     <footer>El equipo de SmartVET te da la más cordial bienvenida.</footer>
     `

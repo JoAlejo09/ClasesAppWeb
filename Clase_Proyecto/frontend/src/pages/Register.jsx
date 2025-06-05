@@ -114,8 +114,8 @@ export const Register = () => {
 
                         {/* Botón para enviar el formulario */}
                         <div className="mb-3">
-                            <button className="bg-gray-500 text-slate-300 border py-2 w-full rounded-xl mt-5 hover:scale-105 duration-300 hover:bg-gray-900 hover:text-white">Registrarse</button>
-                        </div>
+                             <button className="bg-gray-500 text-slate-300 border py-2 w-full rounded-xl mt-5 hover:scale-105 duration-300 hover:bg-gray-900 hover:text-white">Registrarse</button>
+                       </div>
 
                     </form>
 
