@@ -1,10 +1,8 @@
-/*import jwt from "jsonwebtoken"
-import Administrador from "../models/Admin.js"
-import Usuario from "../models/Usuario.js"
+import jwt from "jsonwebtoken"
+import Veterinario from "../models/Veterinario.js"
 
-const crearTokenJWT = (id, rol) => {
-
-    return jwt.sign({ id, rol }, process.env.JWT_SECRET, { expiresIn: "1d" })
+const crearTokenJWT = (id, rol)=>{
+    return jwt.sign({id,rol}, process.env.JWT_SECRET, {expiresIn:"1d"})
 }
 
 const verificarTokenJWT = async (req, res, next) => {
@@ -52,4 +50,3 @@ export {
     crearTokenJWT,
     verificarTokenJWT 
 }
-*/
