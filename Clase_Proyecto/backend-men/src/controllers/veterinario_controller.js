@@ -64,17 +64,15 @@ const login = async(req,res)=>{
     if(veterinarioBDD?.confirmEmail===false) return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
     if(!veterinarioBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
     const verificarPassword = await veterinarioBDD.matchPassword(password)
-    if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
+    if(!verificarPassword) return res.status(401).json({msg:"Lo sentimos, el password no es el correcto"})
     const {nombre,apellido,direccion,telefono,_id,rol} = veterinarioBDD
-    const token = crearTokenJWT(veterinarioBDD._id, veterinarioBDD.rol)
+    //const token = crearTokenJWT(veterinarioBDD._id, veterinarioBDD.rol)
     res.status(200).json({
-        token,
+        rol,
         nombre,
         apellido,
         direccion,
-        telefono,
-        _id,
-        email:veterinarioBDD.email
+        _id
     })
 }
 

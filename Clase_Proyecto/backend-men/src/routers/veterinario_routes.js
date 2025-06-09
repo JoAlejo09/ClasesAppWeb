@@ -2,6 +2,10 @@ import {Router} from 'express'
 import { login, comprobarTokenPasword, confirmarMail, crearNuevoPassword, recuperarPassword, registro } from '../controllers/veterinario_controller.js'
 const router = Router()
 
+/*
+GET -> CUANDO SOLO SE LLAMA
+POST -> CUANDO SE QUIERE ENVIAR DATOS */
+
 
 router.post('/registro',registro)
 router.get('/confirmar/:token',confirmarMail)
