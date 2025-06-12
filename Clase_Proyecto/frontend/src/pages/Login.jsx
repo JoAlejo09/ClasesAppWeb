@@ -1,18 +1,19 @@
 import { useState } from 'react';
-import { useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import useFetch from '../hooks/useFetch';
 import { ToastContainer } from 'react-toastify';
 
+
 const Login = () => {
     const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false);
-    const {register, handleSubmit, formState:{errors}} = useForm()
-    const {fetchDataBackend} = useFetch();
+    const { register, handleSubmit, formState: { errors } } = useForm()
+    const { fetchDataBackend } = useFetch()
 
-    const loginUser = async(data)=>{
+    const loginUser = async(data) => {
         const url = `${import.meta.env.VITE_BACKEND_URL}/login`
-        const response = await fetchDataBackend(url,data,'POST')
+        const response = await fetchDataBackend(url, data,'POST')
         if(response){
             navigate('/dashboard')
         }
@@ -20,7 +21,7 @@ const Login = () => {
 
     return (
         <div className="flex flex-col sm:flex-row h-screen">
-            <ToastContainer/>
+            <ToastContainer />
             {/* Imagen de fondo */}
             <div className="w-full sm:w-1/2 h-1/3 sm:h-screen bg-[url('/public/images/doglogin.jpg')] 
             bg-no-repeat bg-cover bg-center sm:block hidden">
@@ -32,15 +33,14 @@ const Login = () => {
                     <h1 className="text-3xl font-semibold mb-2 text-center uppercase text-gray-500">Bienvenido(a) de nuevo</h1>
                     <small className="text-gray-400 block my-4 text-sm">Por favor ingresa tus datos</small>
 
-                     <form onSubmit={handleSubmit(loginUser)}>
+                    <form onSubmit={handleSubmit(loginUser)}>
 
                         {/* Correo electrónico */}
                         <div className="mb-3">
                             <label className="mb-2 block text-sm font-semibold">Correo electrónico</label>
                             <input type="email" placeholder="Ingresa tu correo" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500" 
                                 {...register("email", { required: "El correo es obligatorio" })}
-
-                        />
+                            />
                                 {errors.email && <p className="text-red-800">{errors.email.message}</p>}
                         </div>
 
@@ -53,7 +53,6 @@ const Login = () => {
                                     placeholder="********************"
                                     className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500 pr-10"
                                     {...register("password", { required: "La contraseña es obligatoria" })}
-
                                 />
                                     {errors.password && <p className="text-red-800">{errors.password.message}</p>}
                                 <button
@@ -76,7 +75,8 @@ const Login = () => {
 
                         {/* Botón de iniciar sesión */}
                         <div className="my-4">
-                            <Link to="/dashboard" className="py-2 w-full block text-center bg-gray-500 text-slate-300 border rounded-xl hover:scale-100 duration-300 hover:bg-gray-900 hover:text-white">Iniciar sesión</Link>
+                            <button className="py-2 w-full block text-center bg-gray-500 text-slate-300 border rounded-xl 
+                            hover:scale-100 duration-300 hover:bg-gray-900 hover:text-white">Iniciar sesión</button>
                         </div>
                     </form>
 

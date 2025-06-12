@@ -16,6 +16,7 @@ function useFetch() {
             return respuesta?.data
             
         } catch (error) {
+            console.log(error)
             toast.error(error.response?.data?.msg)
             const errorMsg = error.response?.data?.msg || 'Error desconocido';
             throw new Error(errorMsg);
