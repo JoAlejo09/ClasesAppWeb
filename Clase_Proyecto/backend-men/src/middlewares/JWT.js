@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import Veterinario from '../models/Veterinario.js'
 const crearTokenJWT = (id,rol) =>{
-    return jwt.sign({id,rol}, process.env.JWT_SECRET,{expiresIn:"25s"})
+    return jwt.sign({id,rol}, process.env.JWT_SECRET,{expiresIn:"1h"})
 }
 
 const verificarTokenJWT=async(req, res, next) =>{
