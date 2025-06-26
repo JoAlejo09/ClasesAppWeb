@@ -3,6 +3,7 @@ import dotenv from 'dotenv' //Manejo de variables de entorno
 import cors from 'cors'  //Permita la comunicacion frontend y backend
 //import routerAdministrador from './routers/administrador_routes.js'
 import routerVeterinarios from './routers/veterinario_routes.js'
+import routerPacientes from './routers/paciente_routes.js'
 const app = express()
 dotenv.config()
 
@@ -20,5 +21,6 @@ app.get('/',(req,res)=>{
 
 //app.use('/api',routerAdministrador)
 app.use('/api',routerVeterinarios)
+app.use('/api',routerPacientes)
 app.use((req,res)=> res.status(400).send("Endpoint no encontrado - 404"))
 export default app

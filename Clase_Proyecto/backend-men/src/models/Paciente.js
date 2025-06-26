@@ -1,45 +1,98 @@
-*import { Schema, model } from 'mongoose';
-
+import mongoose, {Schema, model} from "mongoose";
+import bcrypt from "bcryptjs";
 const pacienteSchema = new Schema({
-  nombre: { type: String, required: true },
-  apellido: { type: String, required: true },
-  cedula: { type: String, required: true, unique: true },
-  correo: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  telefono: { type: String },
-  carrera: { type: String },
-  nivel: { type: String }, // Ej. "3ro", "4to", "Graduado", etc.
-  fechaNacimiento: { type: Date },
+    nombrePropietario:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    cedulaPropietario:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    emailPropietario:{
+        type: String,
+        required: true,
+        trim: true,
+        unique: true
+    },
+    passwordPropietario:{
+        type: String,
+        required: true,
+    },
+    celularPropietario:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    nombreMascota:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    avatarMascota:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    avatarMascotaID:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    avatarMascotaIA:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    tipoMascota:{
+        type: String,
+        required: true,
+        trim: true
+    },
+    fechaNacimientoMascota:{
+        type:Date,
+        required:true,
+        trim:true
+    },
+    sintomasMascota:{
+        type:String,
+        required:true,
+        trim:true
+    },
+    fechaIngresoMascota:{
+        type:Date,
+        required:true,
+        trim:true,
+        default:Date.now
+    },
+    salidaMascota:{
+        type:Date,
+        trim:true,
+        default:null
+    },
+    estadoMascota:{
+        type:Boolean,
+        default:true
+    },
+    rol:{
+        type:String,
+        default:"paciente"
+    },
+    veterinario:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Veterinario'
+    }
 
-  confirmEmail: { type: Boolean, default: false },
-  token: { type: String }, // para confirmar cuenta o restablecer contraseña
-
-  rol: { type: String, default: "paciente" }, // paciente o admin en general
-
-  respuestasCuestionarios: [
-    { type: Schema.Types.ObjectId, ref: 'RespuestaCuestionario' }
-  ],
-
-  alertas: [
-    { type: Schema.Types.ObjectId, ref: 'Alerta' }
-  ],
-
-  creadoEn: { type: Date, default: Date.now },
-  actualizadoEn: { type: Date, default: Date.now }
-});
-
-// Encriptar contraseña antes de guardar
-import bcrypt from 'bcryptjs';
-
-pacienteSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
-
-// Método para comparar contraseñas
-pacienteSchema.methods.compararContrasena = async function (input) {
-  return await bcrypt.compare(input, this.password);
-};
-
-export default model('Paciente', pacienteSchema);
+},{
+    timestamps:true
+})
+pacienteSchema.methods.encrypPassword = async function(password){
+    const salt = await bcrypt.genSalt(10)
+    return bcrypt.hash(password, salt)
+}
+pacienteSchema.methods.matchPassword = async function(password){
+    return bcrypt.compare(password, this.passwordPropietario)
+}
+export default model ('Paciente', pacienteSchema)
