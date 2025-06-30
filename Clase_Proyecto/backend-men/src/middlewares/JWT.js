@@ -14,6 +14,10 @@ const verificarTokenJWT=async(req, res, next) =>{
             req.veterinarioBDD = await Veterinario.findById(id).lean().select("-password")
         next()
         }
+        else{
+            req.pacienteBDD = await Paciente.findById(id).lean().select("-password")
+            next()
+        }
     }catch(error){
         return res.status(401).json({ msg: "Token inválido o expirado" });
     }
