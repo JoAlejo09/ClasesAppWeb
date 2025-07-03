@@ -21,14 +21,31 @@ const registrarPaciente = async(req,res)=>{
         await fs.unlink(req.files.imagen.tempFilePath)
     }
     if(req.files?.avatarmascotaIA){
-
+        const base64Data = req.body.avatarmascotaIA.replace(/^data:image\/\w+;base64,/,'')
+        const buffer = Buffer.from(base64Data,'base64')
+        const {secure_url} = await new Promise((resolve,reject) =>{
+           const stream = cloudinary.uploader.upload_stream({folder:'Pacientes',resource_type:'auto'},(error,response) =>{
+             if (error) {
+                reject(error)
+            } else {
+                resolve(response)
+            }
+           })
+           stream.end(buffer)
+        })
+        nuevoPaciente.avatarMascotaIA = secure_url
     }
     await nuevoPaciente.save()
     await sendMailToOwner(emailPropietario,"VET"+password)
     res.status(201).json({msg:"Registro exitoso de la mascota y correo enviado al propietario"})
 
-    }
+}
+const listarPacientes = async (req, res)=>{
+    const pacientes = await Paciente.find({estadoMascota:true}).where('veterinario').equals(req.veterinarioBDD).select("-salida -createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
+    res.status(200).json(pacientes)
+}
 
 export{
-    registrarPaciente
+    registrarPaciente,
+    listarPacientes
 }
