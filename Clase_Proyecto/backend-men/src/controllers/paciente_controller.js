@@ -61,9 +61,45 @@ const eliminarPaciente = (req, res)=>{
     paciente.save();
     res.status(200).json({msg:"Paciente actualizado con exito"})
 }
+const actualizarPaciente = async(req, res)=>{
+    const {id} = req.params
+    if (Object.values(req.body).includes("")) return res.status(401).json({msg:"Debe llenar todos los campos"});
+    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el veterinario ${id}`});
+    if (req.files?.imagen){
+        const paciente = await Paciente.findById(id)
+        if(paciente.avatarMascotaID){
+            await cloudinary.uploader.destroy(paciente.avatarMascotaID);
+        }
+        const cloudiResponse = await cloudinary.uploader.upload(req.files.imagen.tempFilePath, { folder: 'Pacientes' });
+        req.body.avatarMascota = cloudiResponse.secure_url;
+        req.body.avatarMascotaID = cloudiResponse.public_id;
+        await fs.unlink(req.files.imagen.tempFilePath);
+    }
+    await Paciente.findByIdAndUpdate(id, req.body, {new: true})
+    res.status(200).json({msg:"Actualización exitosa del paciente"})
+
+}
+const loginPropietario = async(req, res)=>{
+    const {email:emailPropietario,password:passwordPropietario} = req.body
+     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
+    const pacienteBDD = await Paciente.findOne({emailPropietario})
+    if(!pacienteBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
+    const verificarPassword = await pacienteBDD.matchPassword(passwordPropietario)
+    if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
+    const token = crearTokenJWT(pacienteBDD._id,pacienteBDD.rol)
+	const {_id,rol} = pacienteBDD
+    res.status(200).json({
+        token,
+        rol,
+        _id
+    })
+}
+
 export{
     registrarPaciente,
     listarPacientes,
     detallePaciente,
-    eliminarPaciente
+    eliminarPaciente,
+    actualizarPaciente,
+    loginPropietario
 }

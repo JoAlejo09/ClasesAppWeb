@@ -2,6 +2,7 @@ import { MdDeleteForever, MdInfo,MdPublishedWithChanges } from "react-icons/md";
 import useFetch from "../../hooks/useFetch";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { ToastContainer } from "react-toastify";
 
 const Table = () => {
     const navigate = useNavigate()
@@ -17,6 +18,24 @@ const Table = () => {
         const response = await fetchDataBackend(url, null, "GET", headers)
         setPatients(...patients, response)
     }
+    const deletePatient = async(id)=>{
+        const confirmDelete = confirm("Vas registrar la salida del paciente, ¿Estás seguro?")
+        if (confirmDelete){
+            const url = `${import.meta.env.VITE_BACKEND_URL}/paciente/eliminar/${id}`
+            const storedUser = JSON.parse(localStorage.getItem("auth-token"))
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${storedUser.state.token}`,
+                }
+        }
+        const data ={
+                salidaMascota:new Date().toString()
+            }
+            await fetchDataBackend(url, data, "DELETE", options.headers)
+            setPatients((prevPatients) => prevPatients.filter(patient => patient._id !== id))
+        }
+    }
     useEffect(()=>{
         listPatients()
     },[])
@@ -29,6 +48,7 @@ const Table = () => {
     }
     return (
       <table className="w-full mt-5 table-auto shadow-lg bg-white">
+            <ToastContainer/>
             <thead className="bg-gray-800 text-slate-400">
                 <tr>
                     {["N°", "Nombre mascota", "Nombre propietario", "Email", "Celular", "Estado", "Acciones"].map((header) => (
@@ -53,6 +73,7 @@ const Table = () => {
                                 <MdPublishedWithChanges
                                     title="Actualizar"
                                     className="h-7 w-7 text-slate-800 cursor-pointer inline-block mr-2 hover:text-blue-600"
+                                    onClick={() => navigate(`/dashboard/actualizar/${patient._id}`)}
                                 />
 
                                 <MdInfo
@@ -65,6 +86,8 @@ const Table = () => {
                                 <MdDeleteForever
                                     title="Eliminar"
                                     className="h-7 w-7 text-red-900 cursor-pointer inline-block hover:text-red-600"
+                                    onClick={()=>{deletePatient(patient._id)}}
+
                                 />
                             </td>
                         </tr>
