@@ -2,6 +2,7 @@ import Paciente from "../models/Paciente.js"
 import { sendMailToOwner } from "../config/nodemailer.js"
 import { v2 as cloudinary } from 'cloudinary'
 import fs from "fs-extra"
+import mongoose from "mongoose"
 
 const registrarPaciente = async(req,res)=>{
     const {emailPropietario} = req.body
@@ -44,8 +45,25 @@ const listarPacientes = async (req, res)=>{
     const pacientes = await Paciente.find({estadoMascota:true}).where('veterinario').equals(req.veterinarioBDD).select("-salida -createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
     res.status(200).json(pacientes)
 }
-
+const detallePaciente = async (req,res) => {
+    const {id} =req.params;
+    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({msg:"No existe el usuario"});
+    const paciente = await Paciente.findById(id).select("-createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
+    res.status(200).json(paciente);
+}
+const eliminarPaciente = (req, res)=>{
+    const {id} =req.params;
+    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Faltan datos en la solicitud"})
+    
+    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({msg:`No existe el usuario ${id}`});
+    const {salidaMascota} = req.body;
+    const paciente = Paciente.findByIdAndUpdate(id,{estadoMascota:false, salidaMascota:salidaMascota})
+    paciente.save();
+    res.status(200).json({msg:"Paciente actualizado con exito"})
+}
 export{
     registrarPaciente,
-    listarPacientes
+    listarPacientes,
+    detallePaciente,
+    eliminarPaciente
 }
