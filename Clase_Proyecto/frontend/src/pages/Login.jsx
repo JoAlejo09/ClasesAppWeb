@@ -12,18 +12,17 @@ const Login = () => {
     const { fetchDataBackend } = useFetch()
     const {setToken, setRol} = storeAuth()
 
-    const loginUser = async(data) => {
+const loginUser = async(data) => {
         const url = data.password.includes("VET")
             ? `${import.meta.env.VITE_BACKEND_URL}/paciente/login`
             : `${import.meta.env.VITE_BACKEND_URL}/login`
-        const response = await fetchDataBackend(url, data,'POST')
+        const response = await fetchDataBackend(url, data,'POST', null)
         setToken(response.token)
         setRol(response.rol)
         if(response){
             navigate('/dashboard')
         }
     }
-
     return (
         <div className="flex flex-col sm:flex-row h-screen">
             <ToastContainer />

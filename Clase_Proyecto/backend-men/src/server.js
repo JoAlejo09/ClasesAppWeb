@@ -7,6 +7,8 @@ import fileUpload from "express-fileupload"
 
 import routerVeterinarios from './routers/veterinario_routes.js'
 import routerPacientes from './routers/paciente_routes.js'
+import routerTratamientos from './routers/tratamiento_routes.js'
+
 const app = express()
 dotenv.config()
 cloudinary.config({ 
@@ -34,5 +36,6 @@ app.get('/',(req,res)=>{
 //app.use('/api',routerAdministrador)
 app.use('/api',routerVeterinarios)
 app.use('/api',routerPacientes)
+app.use('/api',routerTratamientos)
 app.use((req,res)=> res.status(400).send("Endpoint no encontrado - 404"))
 export default app

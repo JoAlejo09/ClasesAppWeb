@@ -3,8 +3,13 @@ import useFetch from "../../hooks/useFetch";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { ToastContainer } from "react-toastify";
+import storeAuth from "../../context/storeAuth";
+    
+
 
 const Table = () => {
+    const { rol } = storeAuth()
+
     const navigate = useNavigate()
     const {fetchDataBackend} = useFetch()
     const [patients, setPatients] = useState([])
@@ -47,8 +52,8 @@ const Table = () => {
         )
     }
     return (
-      <table className="w-full mt-5 table-auto shadow-lg bg-white">
-            <ToastContainer/>
+            <table className="w-full mt-5 table-auto shadow-lg bg-white">
+                <ToastContainer/>
             <thead className="bg-gray-800 text-slate-400">
                 <tr>
                     {["N°", "Nombre mascota", "Nombre propietario", "Email", "Celular", "Estado", "Acciones"].map((header) => (
@@ -70,25 +75,29 @@ const Table = () => {
                                 <span className="bg-blue-100 text-green-500 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{patient.estadoMascota && "activo"}</span>
                             </td>
                             <td className='py-2 text-center'>
-                                <MdPublishedWithChanges
-                                    title="Actualizar"
-                                    className="h-7 w-7 text-slate-800 cursor-pointer inline-block mr-2 hover:text-blue-600"
-                                    onClick={() => navigate(`/dashboard/actualizar/${patient._id}`)}
-                                />
-
-                                <MdInfo
+                                                               <MdInfo
                                     title="Más información"
                                     className="h-7 w-7 text-slate-800 cursor-pointer inline-block mr-2 hover:text-green-600"
                                     onClick={() => navigate(`/dashboard/visualizar/${patient._id}`)}
 
-                                />
-
-                                <MdDeleteForever
+                                />{
+                                   rol==="veterinario" &&
+                                   (
+                                    <>
+                                     <MdPublishedWithChanges
+                                    title="Actualizar"
+                                    className="h-7 w-7 text-slate-800 cursor-pointer inline-block mr-2 hover:text-blue-600"
+                                    onClick={() => navigate(`/dashboard/actualizar/${patient._id}`)}
+                                    />
+                                    <MdDeleteForever
                                     title="Eliminar"
                                     className="h-7 w-7 text-red-900 cursor-pointer inline-block hover:text-red-600"
                                     onClick={()=>{deletePatient(patient._id)}}
 
                                 />
+                                    </>
+                                   )
+                                }
                             </td>
                         </tr>
                     ))

@@ -1,35 +1,50 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react"
 import TableTreatments from "../components/treatments/Table"
 import ModalTreatments from "../components/treatments/Modal"
 import { useParams } from "react-router"
 import useFetch from "../hooks/useFetch"
+import storeAuth from "../context/storeAuth"
+import storeTreatments from "../context/storeTreatments"
+import { ToastContainer} from 'react-toastify'
+
+
 
 
 const Details = () => {
-    const {id} = useParams()
+    const { rol } = storeAuth()
+
+    const { id } = useParams()
     const [patient, setPatient] = useState({})
     const [treatments, setTreatments] = useState([])
     const { fetchDataBackend } = useFetch()
-    const listPatient = async () =>{
+    const {modal, toggleModal} = storeTreatments()
+
+    const listPatient = async () => {
         const url = `${import.meta.env.VITE_BACKEND_URL}/paciente/${id}`
         const storedUser = JSON.parse(localStorage.getItem("auth-token"))
-        const headers ={
-            "Content-Type":"application/json",
-            Authorization: `Bearer ${storedUser.state.token}`
+        const headers= {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${storedUser.state.token}`
         }
-        const response = await fetchDataBackend(url,null,"GET", headers)
-        console.log(response)
-        setPatient(response)
+        const response = await fetchDataBackend(url, null, "GET", headers)
+        setPatient(response.patient)
+        setTreatments(response.treatments)
     }
+
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString('es-EC', { dateStyle: 'long', timeZone: 'UTC' })
     }
-    useEffect(()=>{
-        listPatient()
-    },[])
+
+    useEffect(() => {
+        if(modal===false){
+            listPatient()
+        }
+    },[modal])
+
+
     return (
         <>
+        <ToastContainer/>
             <div>
                 <h1 className='font-black text-4xl text-gray-500'>Visualizar</h1>
                 <hr className='my-4 border-t-2 border-gray-300' />
@@ -105,12 +120,18 @@ const Details = () => {
                 <div className='flex justify-between items-center'>
 
                     <p>Este módulo te permite gestionar los tratamientos</p>
+{
+                rol==="veterinario" &&
+                (
+                    <button className="px-5 py-2 bg-green-800 text-white rounded-lg hover:bg-green-700"
+                            onClick={()=>{toggleModal("treatments")}}
 
-                    <button className="px-5 py-2 bg-green-800 text-white rounded-lg hover:bg-green-700">
-                        Registrar
+                    >
+                    Registrar
                     </button>
-
-                    {false && (<ModalTreatments />)}
+                )
+            }            
+            {modal === "treatments" && (<ModalTreatments patientID={patient._id}/>)}
 
                 </div>
 
@@ -125,7 +146,6 @@ const Details = () => {
                 }
             </div>
         </>
-
 
     )
 }

@@ -42,32 +42,36 @@ const registrarPaciente = async(req,res)=>{
 
 }
 const listarPacientes = async (req, res)=>{
-    const pacientes = await Paciente.find({estadoMascota:true}).where('veterinario').equals(req.veterinarioBDD).select("-salida -createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
-    res.status(200).json(pacientes)
+    if (req.pacienteBDD?.rol ==="paciente"){
+        const pacientes = await Paciente.find(req.pacienteBDD._id).select("-salida -createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
+        res.status(200).json(pacientes)
+    }
+    else{
+        const pacientes = await Paciente.find({estadoMascota:true}).where('veterinario').equals(req.veterinarioBDD).select("-salida -createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
+        res.status(200).json(pacientes)
+    }
 }
-const detallePaciente = async (req,res) => {
-    const {id} =req.params;
-    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({msg:"No existe el usuario"});
-    const paciente = await Paciente.findById(id).select("-createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
-    res.status(200).json(paciente);
-}
-const eliminarPaciente = (req, res)=>{
-    const {id} =req.params;
-    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Faltan datos en la solicitud"})
-    
-    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({msg:`No existe el usuario ${id}`});
-    const {salidaMascota} = req.body;
-    const paciente = Paciente.findByIdAndUpdate(id,{estadoMascota:false, salidaMascota:salidaMascota})
-    paciente.save();
-    res.status(200).json({msg:"Paciente actualizado con exito"})
-}
-const actualizarPaciente = async(req, res)=>{
+const detallePaciente = async(req,res)=>{
     const {id} = req.params
-    if (Object.values(req.body).includes("")) return res.status(401).json({msg:"Debe llenar todos los campos"});
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el veterinario ${id}`});
-    if (req.files?.imagen){
+    const paciente = await Paciente.findById(id).select("-createdAt -updatedAt -__v").populate('veterinario','_id nombre apellido')
+    res.status(200).json(paciente)
+}
+const eliminarPaciente = async (req,res)=>{
+    const {id} = req.params
+    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
+    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el veterinario ${id}`})
+    const {salidaMascota} = req.body
+    await Paciente.findByIdAndUpdate(req.params.id,{salidaMascota:Date.parse(salidaMascota),estadoMascota:false})
+    res.status(200).json({msg:"Fecha de salida de la mascota registrado exitosamente"})
+}
+const actualizarPaciente = async(req,res)=>{
+    const {id} = req.params
+    if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
+    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el veterinario ${id}`})
+    if (req.files?.imagen) {
         const paciente = await Paciente.findById(id)
-        if(paciente.avatarMascotaID){
+        if (paciente.avatarMascotaID) {
             await cloudinary.uploader.destroy(paciente.avatarMascotaID);
         }
         const cloudiResponse = await cloudinary.uploader.upload(req.files.imagen.tempFilePath, { folder: 'Pacientes' });
@@ -75,13 +79,12 @@ const actualizarPaciente = async(req, res)=>{
         req.body.avatarMascotaID = cloudiResponse.public_id;
         await fs.unlink(req.files.imagen.tempFilePath);
     }
-    await Paciente.findByIdAndUpdate(id, req.body, {new: true})
+    await Paciente.findByIdAndUpdate(id, req.body, { new: true })
     res.status(200).json({msg:"Actualización exitosa del paciente"})
-
 }
-const loginPropietario = async(req, res)=>{
+const loginPropietario = async(req,res)=>{
     const {email:emailPropietario,password:passwordPropietario} = req.body
-     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
+    if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
     const pacienteBDD = await Paciente.findOne({emailPropietario})
     if(!pacienteBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
     const verificarPassword = await pacienteBDD.matchPassword(passwordPropietario)
@@ -94,6 +97,19 @@ const loginPropietario = async(req, res)=>{
         _id
     })
 }
+const perfilPropietario = (req, res) => {
+    
+    const camposAEliminar = [
+        "fechaIngresoMascota", "sintomasMascota", "salidaMascota",
+        "estadoMascota", "veterinario", "tipoMascota",
+        "fechaNacimientoMascota", "passwordPropietario", 
+        "avatarMascota", "avatarMascotaIA","avatarMascotaID", "createdAt", "updatedAt", "__v"
+    ]
+
+    camposAEliminar.forEach(campo => delete req.pacienteBDD[campo])
+
+    res.status(200).json(req.pacienteBDD)
+}
 
 export{
     registrarPaciente,
@@ -101,5 +117,6 @@ export{
     detallePaciente,
     eliminarPaciente,
     actualizarPaciente,
-    loginPropietario
+    loginPropietario,
+    perfilPropietario
 }

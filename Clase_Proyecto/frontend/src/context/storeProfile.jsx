@@ -12,31 +12,33 @@ const getAuthHeaders = () => {
     };
 };
 
-
 const storeProfile = create((set) => ({
         
         user: null,
         clearUser: () => set({ user: null }),
         profile: async () => {
             try {
-                const url = `${import.meta.env.VITE_BACKEND_URL}/perfil`;
+                const storedUser = JSON.parse(localStorage.getItem("auth-token"));
+                const endpoint = storedUser.state.rol ==="veterinario"
+                    ? "perfil"
+                    : "paciente/perfil"
+                const url = `${import.meta.env.VITE_BACKEND_URL}/${endpoint}`;
+
                 const respuesta = await axios.get(url, getAuthHeaders())
                 set({ user: respuesta.data })
-
-                console.log(respuesta.data)
             } catch (error) {
                 console.error(error)
             }
         },
-        updateProfile:async(data,id) => {
-            try{
-                const url=`${import.meta.env.VITE_BACKEND_URL}/veterinario/${id}`
-                const respuesta = await axios.put(url, data.getAuthHeaders())
-                set({user: respuesta.data})
+        updateProfile:async(data,id)=>{
+            try {
+                const url = `${import.meta.env.VITE_BACKEND_URL}/veterinario/${id}`
+                const respuesta = await axios.put(url, data,getAuthHeaders())
+                set({ user: respuesta.data })
                 toast.success("Perfil actualizado correctamente")
-            }catch(error){
+            } catch (error) {
                 console.log(error)
-                toast.error(error.respuesta?.data?.msg)
+                toast.error(error.response?.data?.msg)
             }
         },
         updatePasswordProfile:async(data,id)=>{
@@ -50,6 +52,7 @@ const storeProfile = create((set) => ({
                 toast.error(error.response?.data?.msg)
             }
         }
+    
     })
 )
 

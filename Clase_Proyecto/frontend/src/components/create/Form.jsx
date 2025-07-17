@@ -2,28 +2,25 @@ import { useState, useEffect } from "react";
 import useFetch from "../../hooks/useFetch"
 import { useNavigate } from "react-router"
 import { useForm } from "react-hook-form"
-import {generateAvatar,convertBlobToBase64} from "../../helpers/consultarIA"
+import { generateAvatar, convertBlobToBase64 } from "../../helpers/consultarIA"
 import { toast, ToastContainer } from "react-toastify"
 
-export const Form = ({patient}) => {
 
-    const [stateAvatar, setStateAvatar] = useState({
-        generatedImage: "https://cdn-icons-png.flaticon.com/512/2138/2138440.png",
-        prompt: "",
-        loading: false
-    })
+export const Form = ({ patient }) => {
+
     const [avatar, setAvatar] = useState({
         image: "https://cdn-icons-png.flaticon.com/512/2138/2138440.png",
         prompt: "",
         loading: false
     })
-    
-    //const [selectedOption , setSelectedOption ] = useState("ia")
+
     const navigate = useNavigate()
-    const { register, handleSubmit, formState: { errors }, setValue, watch,  reset  } = useForm()
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm()
     const { fetchDataBackend } = useFetch()
 
+
     const selectedOption = watch("imageOption")
+
 
     const handleGenerateImage = async () => {
         setAvatar(prev => ({ ...prev, loading: true }))
@@ -32,7 +29,7 @@ export const Form = ({patient}) => {
             // blob:http://localhost/ea27cc7d-
             const imageUrl = URL.createObjectURL(blob)
             // data:image/png;base64,iVBORw0KGgjbjgfyvh
-            const base64Image = await convertBlobToBase64(blob)           
+            const base64Image = await convertBlobToBase64(blob)
             setAvatar(prev => ({ ...prev, image: imageUrl, loading: false }))
             setValue("avatarMascotaIA", base64Image)
         }
@@ -42,6 +39,9 @@ export const Form = ({patient}) => {
             setValue("avatarMascotaIA", avatar.image)
         }
     }
+
+
+
     const registerPatient = async (data) => {
         /*
         const data = {
@@ -62,17 +62,17 @@ export const Form = ({patient}) => {
         })
         let url = `${import.meta.env.VITE_BACKEND_URL}/paciente/registro`
         const storedUser = JSON.parse(localStorage.getItem("auth-token"))
-        const headers= {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${storedUser.state.token}`
-            }
-        
+        const headers = {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${storedUser.state.token}`
+        }
+
         let response
         if (patient?._id) {
             url = `${import.meta.env.VITE_BACKEND_URL}/paciente/actualizar/${patient._id}`
             response = await fetchDataBackend(url, formData, "PUT", headers)
         }
-        else{
+        else {
             response = await fetchDataBackend(url, formData, "POST", headers)
         }
         if (response) {
@@ -81,6 +81,7 @@ export const Form = ({patient}) => {
             }, 2000);
         }
     }
+
     useEffect(() => {
         if (patient) {
             reset({
@@ -90,12 +91,13 @@ export const Form = ({patient}) => {
                 celularPropietario: patient?.celularPropietario,
                 nombreMascota: patient?.nombreMascota,
                 tipoMascota: patient?.tipoMascota,
-                fechaNacimientoMascota: new Date(patient?.fechaNacimientoMascota).toLocaleDateString('en-CA', {timeZone: 'UTC'}),
+                fechaNacimientoMascota: new Date(patient?.fechaNacimientoMascota).toLocaleDateString('en-CA', { timeZone: 'UTC' }),
                 sintomasMascota: patient?.sintomasMascota
             })
         }
     }, [])
-           return (
+
+    return (
         <form onSubmit={handleSubmit(registerPatient)}>
             <ToastContainer />
 
@@ -116,7 +118,7 @@ export const Form = ({patient}) => {
                             {...register("cedulaPropietario", { required: "La cédula es obligatoria" })}
                         />
                         <button className="py-1 px-8 bg-gray-600 text-slate-300 border rounded-xl hover:scale-110 duration-300 hover:bg-gray-900 hover:text-white sm:w-80"
-                        disabled={patient}
+                            disabled={patient}
                         >
                             Consultar
                         </button>
@@ -187,7 +189,7 @@ export const Form = ({patient}) => {
                         <input
                             type="radio"
                             value="ia"
-                            {...register("imageOption",{ required: !patient && "El nombre de la mascota es obligatorio"})}
+                            {...register("imageOption", { required: !patient && "El nombre de la mascota es obligatorio" })}
                             disabled={patient}
                         />
                         Generar con IA
@@ -198,7 +200,7 @@ export const Form = ({patient}) => {
                         <input
                             type="radio"
                             value="upload"
-                            {...register("imageOption",{ required: !patient && "El nombre de la mascota es obligatorio"})}
+                            {...register("imageOption", { required: !patient && "El nombre de la mascota es obligatorio" })}
                             disabled={patient}
                         />
                         Subir Imagen
@@ -215,20 +217,20 @@ export const Form = ({patient}) => {
                                 type="text"
                                 placeholder="Ingresa el prompt"
                                 className="block w-full rounded-md border border-gray-300 py-1 px-2 text-gray-500"
-                                value={stateAvatar.prompt}
-                                onChange={(e) => setStateAvatar(prev => ({ ...prev, prompt: e.target.value }))}
+                                value={avatar.prompt}
+                                onChange={(e) => setAvatar(prev => ({ ...prev, prompt: e.target.value }))}
                             />
                             <button
                                 type="button"
                                 className="py-1 px-8 bg-gray-600 text-slate-300 border rounded-xl hover:scale-110 duration-300 hover:bg-gray-900 hover:text-white sm:w-80"
                                 onClick={handleGenerateImage}
-                                disabled={stateAvatar.loading}
+                                disabled={avatar.loading}
                             >
-                                {stateAvatar.loading ? "Generando..." : "Generar con IA"}
+                                {avatar.loading ? "Generando..." : "Generar con IA"}
                             </button>
                         </div>
-                        {stateAvatar.generatedImage && (
-                            <img src={stateAvatar.generatedImage} alt="Avatar IA" width={100} height={100} />
+                        {avatar.generatedImage && (
+                            <img src={avatar.generatedImage} alt="Avatar IA" width={100} height={100} />
                         )}
                     </div>
                 )}
